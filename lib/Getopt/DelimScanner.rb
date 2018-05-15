@@ -1,29 +1,29 @@
 #!/usr/bin/ruby
-# 
+#
 # A derivative of StringScanner that can scan for delimited constructs in
 # addition to regular expressions. It is a loose port of the Text::Balanced
 # module for Perl by Damian Conway <damian@cs.monash.edu.au>.
-# 
+#
 # == Synopsis
-# 
+#
 #   se = DelimScanner::new( myString )
-# 
+#
 # == Authors
-# 
+#
 # * Michael Granger <ged@FaerieMUD.org>
 # * Gonzalo Garramuno <GGarramuno@aol.com>
-# 
+#
 # Copyright (c) 2002, 2003 The FaerieMUD Consortium. Most rights reserved.
-# 
+#
 # This work is licensed under the Creative Commons Attribution License. To view
 # a copy of this license, visit http://creativecommons.org/licenses/by/1.0 or
 # send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California
 # 94305, USA.
-# 
+#
 # == Version
 #
 #  $Id: DelimScanner.rb,v 1.2 2003/01/12 20:56:51 deveiant Exp $
-# 
+#
 # == History
 #
 # - Added :suffix hash key for returning rest (right) of matches, like Perl's
@@ -66,7 +66,7 @@ class DelimScanner
     ### Scanner exception classes
     class MatchFailure < RuntimeError ; end
     class DelimiterError < RuntimeError ; end
-    
+
 
     extend Forwardable
     StringScanner.must_C_version
@@ -117,7 +117,7 @@ class DelimScanner
         }
     end
 
-    
+
     ### Create a new DelimScanner object for the specified <tt>string</tt>. If
     ### <tt>dup</tt> is <tt>true</tt>, a duplicate of the target string will be
     ### used instead of the one given. The target string will be frozen after
@@ -129,7 +129,7 @@ class DelimScanner
     end
 
 
-    
+
     ######
     public
     ######
@@ -147,22 +147,22 @@ class DelimScanner
     # object, except those that need a casting delegator, which uses an indirect
     # delegation method.
     def_delegators :@scanner,
-        *( StringScanner.instance_methods(false) - 
+        *( StringScanner.instance_methods(false) -
 	   NeedCastingDelegators.collect {|sym| sym.id2name} )
 
     def_casting_delegators( *NeedCastingDelegators )
 
 
-    
+
     # The last match error encountered by the scanner
     attr_accessor :matchError
     protected :matchError=  ;   # ; is to work around a ruby-mode indent bug
-    
+
     # Debugging level
     attr_accessor :debugLevel
 
 
-    
+
     ### Returns <tt>true</tt> if the scanner has encountered a match error.
     def matchError?
         return ! @matchError.nil?
@@ -174,7 +174,7 @@ class DelimScanner
     ### and any character escaped by the specified <tt>escape</tt>
     ### character/s. If matched, advances the scan pointer and returns a Hash
     ### with the following key/value pairs on success:
-    ### 
+    ###
     ### [<tt>:match</tt>]
     ###   The text of the match, including delimiters.
     ### [<tt>:prefix</tt>]
@@ -196,7 +196,7 @@ class DelimScanner
                 [ prefix, self.pointer ]
             return nil
         end
-            
+
         # Now build a delimited pattern with the specified parameters.
         delimPattern = makeDelimPattern( delimiters, escape, prefix )
         debugMsg( 2, "Delimiter pattern is %s" % delimPattern.inspect )
@@ -240,7 +240,7 @@ class DelimScanner
     ### balanced <tt>delimiters</tt> of the type specified, after skipping the
     ### specified <tt>prefix</tt>. On a successful match, this method advances
     ### the scan pointer and returns a Hash with the following key/value pairs:
-    ### 
+    ###
     ### [<tt>:match</tt>]
     ###   The text of the match, including the delimiting brackets.
     ### [<tt>:prefix</tt>]
@@ -332,7 +332,7 @@ class DelimScanner
     ### more options which govern the matching operation. They are described in
     ### more detail in the Description section of 'lib/DelimScanner.rb'. On a
     ### successful match, this method advances the scan pointer and returns an
-    ### 
+    ###
     ### [<tt>:match</tt>]
     ###   The text of the match, including the delimiting tags.
     ### [<tt>:prefix</tt>]
@@ -416,7 +416,7 @@ class DelimScanner
     ### regexen (eg., <tt>/pattern/</tt>) are matched as well. Advances the scan
     ### pointer and returns a Hash with the following key/value pairs on
     ### success:
-    ### 
+    ###
     ### [<tt>:match</tt>]
     ###   The entire text of the match.
     ### [<tt>:prefix</tt>]
@@ -431,7 +431,7 @@ class DelimScanner
     ###   The right delimiter of the first block of the operation.
     ### [<tt>:modifiers</tt>]
     ###   The trailing modifiers on the operation (if any).
-    ### 
+    ###
     ### On failure, returns nil.
     def scanQuotelike( prefix='\s*', matchRawRegex=true )
 
@@ -456,7 +456,7 @@ class DelimScanner
         return result
     end
 
-    
+
     ### Match using the #scanQuotelike method, but only return the match or nil.
     def extractQuotelike( *args )
         rval = scanQuotelike( *args ) or return nil
@@ -610,13 +610,13 @@ class DelimScanner
                  rdel.inspect )
 
         # Test for the prefix, failing if not found
-        raise MatchFailure, "Did not find prefix: #{prefix.inspect}" unless 
+        raise MatchFailure, "Did not find prefix: #{prefix.inspect}" unless
             self.skip( prefix )
 
         # Mark this position as the left-delimiter pointer
         ldelpos = self.pointer
         debugMsg( 3, "Found prefix. Left delim pointer at %d", ldelpos )
-        
+
         # Match opening delimiter or fail
         unless (( delim = self.scan(ldel) ))
             raise MatchFailure, "Did not find opening bracket after prefix: '%s' (%d)" %
@@ -626,7 +626,7 @@ class DelimScanner
         # A stack to keep track of nested delimiters
         nesting = [ delim ]
         debugMsg( 3, "Found opening bracket. Nesting = %s", nesting.inspect )
-        
+
         while self.rest?
 
             debugMsg( 5, "Starting scan loop. Nesting = %s", nesting.inspect )
@@ -721,7 +721,7 @@ class DelimScanner
 
     ### Starting from the scan pointer, skip the specified <tt>prefix</tt>, and
     ### try to match text bracketed by the given left and right tag-delimiters
-    ### (<tt>ldel</tt> and <tt>rdel</tt>). 
+    ### (<tt>ldel</tt> and <tt>rdel</tt>).
     def matchTagged( prefix, ldel, rdel, failmode, bad, ignore )
         failmode = failmode.to_s.intern if failmode
         startPos = self.pointer
@@ -743,7 +743,7 @@ class DelimScanner
 
         # Look for the opening delimiter
         unless (( match = self.scan(ldel) ))
-            raise MatchFailure, "Did not find opening tag %s at offset %d" % 
+            raise MatchFailure, "Did not find opening tag %s at offset %d" %
                 [ ldel.inspect, self.pointer ]
         end
 
@@ -772,7 +772,7 @@ class DelimScanner
             elsif (( matchlength = self.skip( /^(\n[ \t]*\n)/ ) ))
                 paraPos ||= self.pointer - matchlength
                 debugMsg 4, "Found paragraph position at offset %d" % paraPos
-                
+
             # Match closing tag
             elsif (( matchlength = self.skip( rdelspec ) ))
                 closeTagPos = self.pointer - matchlength
@@ -808,7 +808,7 @@ class DelimScanner
                         [ tag, self.pointer ]
                 end
 
-            else 
+            else
                 self.pointer += 1
                 debugMsg 5, "Advanced scan pointer to offset %d" % self.pointer
             end
@@ -818,7 +818,7 @@ class DelimScanner
         # okay if the failmode indicates we don't care. Otherwise, it's an error.
         unless closeTagPos
             debugMsg 3, "No close tag position found. "
-            
+
             if failmode == :max || failmode == :para
                 closeTagPos = self.pointer - 1
                 debugMsg 4, "Failmode %s tolerates no closing tag. Close tag position set to %d" %
@@ -873,7 +873,7 @@ class DelimScanner
                 [ Regexp.quote(initial),
                   initial, initial,
                   Regexp.quote(initial) ]
-            debugMsg 2, "Matching simple quote at offset %d with /%s/" % 
+            debugMsg 2, "Matching simple quote at offset %d with /%s/" %
                 [ self.pointer, pattern ]
 
             # Search for it, raising an exception if it's not found
@@ -906,7 +906,7 @@ class DelimScanner
         # complicated (though nothing like Perl's, thank the Goddess)
         elsif self.scan( %r:%[rwqQx]?(?=\S): )
             op = self.matched
-            debugMsg 2, "Matching a real quotelike ('%s') at offset %d" % 
+            debugMsg 2, "Matching a real quotelike ('%s') at offset %d" %
                 [ op, self.pointer ]
             modifiers = nil
 
@@ -915,7 +915,7 @@ class DelimScanner
 
             # Peek ahead to see what the delimiter is
             ldel = self.check( /\S/ )
-            
+
             # If it's a bracketing character, just use matchBracketed
             if ldel =~ /[\[(<{]/
                 rdel = ldel.tr( '[({<', '])}>' )
@@ -1010,7 +1010,7 @@ class DelimScanner
                     self.rest[0,20].chomp
         end
 
-        
+
         debugMsg 1, "matchQuotelike succeeded: %s" % rval.inspect
         return rval
     end
@@ -1035,7 +1035,7 @@ class DelimScanner
 
             debugMsg 2, "Not a predefined global at '%s...' (offset %d)" %
                 [ self.rest[0,20].chomp, self.pointer ]
-            
+
             # Look for a valid identifier
             unless self.scan( /\*?(?:[$@]|::)?(?:[a-z_]\w*(?:::\s*))*[_a-z]\w*/is )
                 raise MatchFailure, "No variable found: Bad identifier (offset %d)" % self.pointer
@@ -1102,7 +1102,7 @@ class DelimScanner
         closingDelim = outerDelimPairs[self.matched] or
             raise DelimiterError, "Could not find closing delimiter for '%s'" %
                 self.matched
-        
+
         debugMsg 3, "Scanning for closing delim '#{closingDelim}'"
         matched = ''
         patvalid = true
@@ -1115,7 +1115,7 @@ class DelimScanner
             # Skip comments
             debugMsg 5, "Trying to match a comment"
             if self.scan( /\s*#.*/ )
-                debugMsg 4, "Skipping comment '%s' to offset %d" % 
+                debugMsg 4, "Skipping comment '%s' to offset %d" %
                     [ self.matched, self.pointer ]
                 next
             end
@@ -1249,13 +1249,13 @@ class DelimScanner
     def makeDelimPattern( delimiters, escapes='\\', prefix='\\s*' )
         delimiters = delimiters.to_s
         escapes = escapes.to_s
-        
+
         raise DelimiterError, "Illegal delimiter '#{delimiter}'" unless delimiters =~ /\S/
 
         # Pad the escapes string to the same length as the delimiters
         escapes.concat( escapes[-1,1] * (delimiters.length - escapes.length) )
         patParts = []
-        
+
         # Escape each delimiter and a corresponding escape character, and then
         # build a pattern part from them
         delimiters.length.times do |i|
@@ -1274,5 +1274,3 @@ class DelimScanner
     end
 
 end # class StringExtractor
-
-

@@ -1,7 +1,8 @@
+# coding: iso-8859-1
 #
 #  Getopt::Declare - Declaratively Expressed Command-Line Arguments via Regular Expressions
 #
-#  Ruby port of Perl's Getopt::Declare, version 1.21, 
+#  Ruby port of Perl's Getopt::Declare, version 1.21,
 #  released May 21, 1999.
 #
 #   	$Release Version: 1.28 $
@@ -61,7 +62,7 @@ end
 
 
 # Regex for removing bracket directives
-BracketDirectives = 
+BracketDirectives =
   /\[\s*(?:ditto|tight|strict|no\s*case|repeatable|debug|required|mutex:.*|implies:.*|excludes:.*|requires:.*|cluster:.*)\s*\]/
 
 
@@ -93,17 +94,17 @@ module Getopt
       end
 
       # Returns how to cache code in class
-      def cachecode(a,b)  
+      def cachecode(a,b)
 	''
       end
 
-      # Helps build regex that matches parameters of flags 
-      def trailer    
+      # Helps build regex that matches parameters of flags
+      def trailer
 	nil
       end
 
-     # Helps build regex that matches parameters of flags 
-      def ows(g)	      
+     # Helps build regex that matches parameters of flags
+      def ows(g)
 	g
       end
     end # StartOpt
@@ -113,7 +114,7 @@ module Getopt
     class EndOpt < StartOpt
       # Returns regex used matching end of options
       def matcher(g)
-	'())?' 
+	'())?'
       end
     end  # EndOpt
 
@@ -133,51 +134,51 @@ module Getopt
           ':s'	=> { :pattern => '(?:%T(?:\S|\0))+(?=\s|\0|\z)' },
           ':qs'	=> { :pattern => %q{"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|(?:%T(?:\S|\0))+} },
 	  ':id'	=> { :pattern => '%T[a-zA-Z_](?:%T\w)*(?=\s|\0|\z)' },
-	  ':d'	=> { 
+	  ':d'	=> {
             :pattern => '(?:%T(?:\S|\0))+',
 	    :action => %q%
               reject( (_VAL_.nil? || !test(?d, _VAL_) ),
                "in parameter '#{_PARAM_}' (\"#{_VAL_}\" is not a directory)")%
 	  },
-	  ':if'	=> { 
+	  ':if'	=> {
             :pattern => '%F(?:%T(?:\S|\0))+(?=\s|\0|\z)',
 	    :action => %q%
               reject( (_VAL_.nil? || _VAL_ != "-" && !test(?r, _VAL_) ),
                "in parameter '#{_PARAM_}' (file \"#{_VAL_}\" is not readable)")%
 	  },
-	  ':of'	=> { 
+	  ':of'	=> {
             :pattern => '%F(?:%T(?:\S|\0))+(?=\s|\0|\z)',
 	    :action => %q%
-            reject( (_VAL_.nil? || _VAL_ != "-" && 
-                     test(?r, _VAL_) && !test(?w, _VAL_)), 
+            reject( (_VAL_.nil? || _VAL_ != "-" &&
+                     test(?r, _VAL_) && !test(?w, _VAL_)),
               "in parameter '#{_PARAM_}' (file \"#{_VAL_}\" is not writable)")%
 	  },
 	  ''	=> { :pattern => ':s', :ind => 1 },
 
-	  ':+i'	=> { 
+	  ':+i'	=> {
             :pattern => ':i',
-	    :action => %q%reject( _VAL_ <= 0, 
+	    :action => %q%reject( _VAL_ <= 0,
                                    "in parameter '#{_PARAM_}' (#{_VAL_} must be an integer greater than zero)")%,
 	    :ind => 1
 	  },
 
-	  ':+n'	=> { 
+	  ':+n'	=> {
             :pattern => ':n',
-	    :action => %q%reject( _VAL_ <= 0.0, 
+	    :action => %q%reject( _VAL_ <= 0.0,
                                    "in parameter '#{_PARAM_}' (#{_VAL_} must be a number greater than zero)")%,
 	    :ind => 1
 	  },
 
-	  ':0+i' => { 
+	  ':0+i' => {
             :pattern => ':i',
-	    :action => %q%reject( _VAL_ < 0, 
+	    :action => %q%reject( _VAL_ < 0,
                                    "in parameter '#{_PARAM_}' (#{_VAL_} must be an positive integer)")%,
 	    :ind  => 1
 	  },
-	  
-	  ':0+n' => { 
+
+	  ':0+n' => {
 	    :pattern => ':n',
-	    :action => %q%reject( _VAL_ < 0, 
+	    :action => %q%reject( _VAL_ < 0,
                                    "in parameter '#{_PARAM_}' (#{_VAL_} must be an positive number)")%,
 	    :ind => 1
 	  },
@@ -230,7 +231,7 @@ module Getopt
 	  pattern = ":s"
 	  ref = 1
 	end
-	
+
 	@@stdtype[typeid] = {}
 	@@stdtype[typeid][:pattern] = "(?:#{pattern})" if pattern && !ref
 	@@stdtype[typeid][:pattern] = ":#{pattern}" if pattern && ref
@@ -331,12 +332,12 @@ EOS
        end
      end
 
-     # Helps build regex that matches parameters of flags 
-     def trailer 
+     # Helps build regex that matches parameters of flags
+     def trailer
        nil	# MEANS TRAILING PARAMETER VARIABLE (in Perl,was '')
      end
-     
-     # Helps build regex that matches parameters of flags 
+
+     # Helps build regex that matches parameters of flags
      # Wraps parameter passed for #$1, etc. matching
      def ows(g)
        return '[\s|\0]*(' + g + ')' unless @nows
@@ -359,7 +360,7 @@ EOS
 
      # Return string with code to process array parameter
      def code(*t)
-	
+
 	if t[0]
 	  pos1 = t[0].to_s
 	else
@@ -369,7 +370,7 @@ EOS
 	code = <<-EOS
 		  _VAR_ = %q|<#{@name}>|
 		  _VAL_ = nil
-		  #{@name} = (@@m[#{pos1}]||'').split(' ').map { |i| 
+		  #{@name} = (@@m[#{pos1}]||'').split(' ').map { |i|
                                                            i.tr("\\0", " ") }
 	EOS
 
@@ -406,7 +407,7 @@ EOS
    class Punctuator
 
      # Constructor
-     def initialize(text, nows)	
+     def initialize(text, nows)
        @text = text
        @nows = nows
      end
@@ -418,7 +419,7 @@ EOS
 
      # Return string with code to process punctuation
      def code(*t)
-       
+
        if t[0]
 	 pos1 = t[0].to_s
        else
@@ -441,12 +442,12 @@ EOS
        end
      end
 
-     # Helps build regex that matches parameters of flags 
-     def trailer 
+     # Helps build regex that matches parameters of flags
+     def trailer
        @text
      end
 
-     # Helps build regex that matches parameters of flags 
+     # Helps build regex that matches parameters of flags
      # Wraps parameter passed for #$1, etc. matching
      def ows(g)
        return '[\s\0]*(' + g + ')' unless @nows
@@ -505,7 +506,7 @@ EOS
     # Return string with regex that avoids all flags in declaration
     def Arg.negflagpat(*t)
       if !@@negflagpat && @@flags
-	@@negflagpat = ( @@flags.map { |i| 
+	@@negflagpat = ( @@flags.map { |i|
 			  "(?!" + Regexp::quote(i) + ")" } ).join('')
       else
 	@@negflagpat
@@ -515,7 +516,7 @@ EOS
     # Return string with regex that matches any of the flags in declaration
     def Arg.posflagpat(*t)
       if !@@posflagpat && @@flags
-	@@posflagpat = '(?:' + ( @@flags.map { |i| 
+	@@posflagpat = '(?:' + ( @@flags.map { |i|
 				  Regexp::quote(i) } ).join('|') + ')'
       else
 	@@posflagpat
@@ -531,7 +532,7 @@ EOS
     def found_requires
       expr = @requires.gsub(/((?:&&|\|\|)?\s*(?:[!(]\s*)*)([^ \t\n|&\)]+)/x,
                             '\1_FOUND_[\'\2\']')
-      
+
       if !valid_syntax?( expr )
         raise "Error: bad condition in [requires: #{original}]\n"
       end
@@ -610,7 +611,7 @@ EOS
 	      @items += 1
 	    end
 
-	  else 
+	  else
 	    break
 	  end # if arg/spec.sub
 	ensure
@@ -659,8 +660,8 @@ EOS
         boundary = '(\s+|\Z)' if flag =~ /^(--|-|\+|\+\+)$/
 
 	code << '
-                  _args && _pos = gindex( _args, /\G[\s|\0]*' + 
-	  Regexp::quote(flag) + boundary + '/' + nocasei + ", _pos) or throw(:paramout) 
+                  _args && _pos = gindex( _args, /\G[\s|\0]*' +
+	  Regexp::quote(flag) + boundary + '/' + nocasei + ", _pos) or throw(:paramout)
                   unless @_errormsg
 		    @_errormsg = %q|incorrect specification of '" + flag + "' parameter|
                   end
@@ -696,7 +697,7 @@ EOS
       }
 
       if flag
-	mutexlist = owner.mutex[flag] ? 
+	mutexlist = owner.mutex[flag] ?
 	(  owner.mutex[flag].map {|i| "'#{i}'"} ).join(',') : ''
 
 	code << "
@@ -788,11 +789,11 @@ EOS
   # This is an additional function added to the class to simulate Perl's
   # pos() \G behavior and m///g
   #
-  # It performs a regex match, and returns the last index position of the 
+  # It performs a regex match, and returns the last index position of the
   # match or nil.  On successive invocations, it allows doing regex matches
   # NOT from the beginning of the string easily.
   #
-  # Class Array @@m stores the list of matches, as #$1 and similar 
+  # Class Array @@m stores the list of matches, as #$1 and similar
   # variables have short lifespan in ruby, unlike perl.
   #
   def gindex(str, re, pos)
@@ -821,8 +822,8 @@ EOS
     when Array
       return val.map{ |i| flatten(i,1) }.join(" ")
     when Hash
-      return val.keys.map{ |i| nested || 
-	  i =~ /^-/ ? [i, flatten(val[i],1)] : 
+      return val.keys.map{ |i| nested ||
+	  i =~ /^-/ ? [i, flatten(val[i],1)] :
                       [flatten(val[i],1)] }.join(" ")
     else
       return val
@@ -838,7 +839,7 @@ EOS
   def _load_sources( _get_nextline, files )
     text  = ''
     found = []
-    
+
     for i in files
       begin
 	f = File.open(i,"r")
@@ -872,7 +873,7 @@ EOS
     if desc =~ /\[\s*no\s*case\s*\]/i
       if arg
 	arg.nocase = true
-      else 
+      else
 	nocase = true
       end
     end
@@ -928,7 +929,7 @@ EOS
 
     pat = '' unless pat
 
-    
+
     se  = DelimScanner::new( desc )
     action = se.extractCodeblock || ''
 
@@ -938,8 +939,8 @@ EOS
     raise "Error: bad type directive (expected closing ']' but found " +
       "'#$1' instead): [pvtype: #{name} " + (pat ? "/#{pat}/" : '') +
       " action:#{action} #$1#$2....\n" if desc =~ /\A\s*([^\] \t\n])(\S*)/
-    
-    
+
+
     Getopt::Declare::ScalarArg::addtype(name,pat,action,ind=~/:/)
   end
 
@@ -1001,7 +1002,7 @@ EOS
     Getopt::Declare::Arg::clear
 
     # HANDLE SHORT-CIRCUITS
-    return if opts.size==2 && (!opts[1] || opts[1] == '-SKIP') 
+    return if opts.size==2 && (!opts[1] || opts[1] == '-SKIP')
 
     grammar, source = opts
 
@@ -1009,7 +1010,7 @@ EOS
       raise "Error: No grammar description provided."
     end
 
-    ### REMOVED PREDEF GRAMMAR AS IT WAS NOT DOCUMENTED NOR 
+    ### REMOVED PREDEF GRAMMAR AS IT WAS NOT DOCUMENTED NOR
     ### WORKING IN PERL'S Declare.pm VERSION.
 
     # PRESERVE ESCAPED '['s
@@ -1042,7 +1043,7 @@ EOS
       # TYPE DIRECTIVE:
       se  = DelimScanner::new( i )
 
-      if i =~ /\A\s*\[\s*pvtype:/ 
+      if i =~ /\A\s*\[\s*pvtype:/
 	_action = se.extractBracketed("[")
 	if _action
 	  i.sub!( Regexp::quote( _action ).to_re, "" )   ### @GGA: added
@@ -1053,7 +1054,7 @@ EOS
 	end # if
       end
 
-      # ACTION  
+      # ACTION
       codeblockDelimiters = {
 	'{'     => '}',
       }
@@ -1091,7 +1092,7 @@ EOS
         while i.sub!(re_more_desc,"")
           desc += "#$1"
         end
-	
+
 	ditto = nil
         if _lastdesc and desc.sub!(/\A\s*\[\s*ditto\s*\]/,_lastdesc)
           ditto = arg
@@ -1180,7 +1181,7 @@ EOS
     if @@debug
       f = File.new(".CODE.rb","w") and
 	f.puts( code() ) and
-	f.close() 
+	f.close()
     end
 
     # DO THE PARSE (IF APPROPRIATE)
@@ -1305,7 +1306,7 @@ EOS
     else
       puts r
       exit t[0]
-    end 
+    end
   end
 
   # Print out usage information
@@ -1328,7 +1329,7 @@ EOS
       if t =~ /\A\s*\[\s*pvtype:/
 	if action = se.extractBracketed("[")
 	  t.sub!(Regexp::quote( action ).to_re,'')
-	  t.sub!(/\A[ \t]*\n/,"")  
+	  t.sub!(/\A[ \t]*\n/,"")
 	  next
 	end
       end
@@ -1369,7 +1370,7 @@ EOS
 	desc.gsub!(BracketDirectives,'')
 	#desc.gsub!(/\[.*?\]/,"")
 
-	
+
 	if ditto
 	  desc = (lastdesc ? _ditto(lastflag,lastdesc,desc) : "" )
 	elsif desc =~ /\A\s*\Z/
@@ -1379,13 +1380,13 @@ EOS
 	end
 
 	spec =~ /\A\s*(\S+)/ and lastflag = "#$1"
-        
+
         desc.sub!(/\s+\Z/, "\n")
 	usage += spec + ' ' * uoff + desc
 	next
       end
 
-      
+
 
       # OTHERWISE, DECORATION
       if t.sub!(/((?:(?!\[\s*pvtype:).)*)(\n|(?=\[\s*pvtype:))/,"")
@@ -1403,20 +1404,20 @@ EOS
     end  #while
 
     required = ''
-    
+
     for arg in @args
       required += ' ' + arg.desc + ' '  if arg.required
     end
-      
+
     usage.gsub!(Regexp.new("\29"),"[/") # REINSTATE ESCAPED '['s
-      
+
     required.gsub!(/<([a-zA-Z]\w*):[^>]+>/,'<\1>')
     required.rstrip!
-    
+
     helpcmd = Getopt::Declare::Arg::besthelp
     versioncmd = Getopt::Declare::Arg::bestversion
-    
-      
+
+
     header = ''
     unless @source.nil?
       header << version()
@@ -1427,9 +1428,9 @@ EOS
       header <<  "       #{prog} #{versioncmd}\n" if versioncmd
       header <<  "\n" unless decfirst && decfirst == 1 && usage =~ /\A[ \t]*\n/
     end
-    
+
     header << "Options:\n" unless decfirst && decfirst == 1
-    
+
     usage.sub!(/[\s\n]+\Z/m, '')
 
     pager = $stdout
@@ -1452,7 +1453,7 @@ EOS
   end
 
   attr_accessor :unused
-  
+
 
   # Return list of used parameters (after parsing)
   def used
@@ -1510,7 +1511,7 @@ begin
   _pos     = 0   # current position to match from
   _nextpos = 0   # next position to match from
 
-  catch(:alldone) do 
+  catch(:alldone) do
     while !@_finished
       begin
 	catch(:arg) do
@@ -1521,13 +1522,13 @@ begin
 	    substr = _args[_nextpos..-1]
 	    substr =~ /^(?!\s|\0|\Z)% +
 		Getopt::Declare::Arg::negflagpat() + %q%/ or
-	      begin 
+	      begin
 		_lastprefix=nil
 		break
 	      end
 	    "#{_lastprefix}#{substr}" =~ /^(% +
 		Getopt::Declare::Arg::posflagpat() + %q%)/ or
-	      begin 
+	      begin
 		_lastprefix=nil
 		break
 	      end
@@ -1679,7 +1680,7 @@ end
 
   # Inspect cache (not the declare object)
   def inspect
-    return nil if !@cache 
+    return nil if !@cache
     t = ''
 
     @cache.each { |a,b|

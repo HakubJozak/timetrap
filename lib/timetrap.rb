@@ -6,14 +6,18 @@ require 'sequel'
 require 'yaml'
 require 'erb'
 require 'sequel/extensions/inflector'
-require File.expand_path(File.join(File.dirname(__FILE__), 'timetrap', 'version'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'Getopt/Declare'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'timetrap', 'config'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'timetrap', 'helpers'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'timetrap', 'cli'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'timetrap', 'timer'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'timetrap', 'formatters'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'timetrap', 'auto_sheets'))
+require 'octokit'
+
+require_relative  'timetrap/version'
+require_relative 'Getopt/Declare'
+require_relative 'timetrap/config'
+require_relative 'timetrap/helpers'
+require_relative 'timetrap/cli'
+require_relative 'timetrap/timer'
+require_relative 'timetrap/formatters'
+require_relative 'timetrap/auto_sheets'
+require_relative 'timetrap/github'
+
 module Timetrap
   DB_NAME = defined?(TEST_MODE) ? nil : Timetrap::Config['database_file']
   # connect to database.  This will create one if it doesn't exist
@@ -22,4 +26,6 @@ module Timetrap
     #{CLI::USAGE}
   EOF
 end
-require File.expand_path(File.join(File.dirname(__FILE__), 'timetrap', 'models'))
+
+require_relative 'timetrap/models'
+
