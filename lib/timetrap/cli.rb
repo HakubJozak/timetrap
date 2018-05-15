@@ -24,6 +24,8 @@ COMMAND is one of:
   * backend - Open an sqlite shell to the database.
     usage: t backend
 
+  * gist - Same as display but publish result to a GIST
+
   * configure - Write out a YAML config file. Print path to config file.  The
       file may contain ERB.
     usage: t configure
@@ -169,8 +171,10 @@ COMMAND is one of:
       if args.unused.empty? && Timetrap::Config['default_command']
         self.args = Getopt::Declare.new(USAGE.dup, Timetrap::Config['default_command'])
       end
+
       command = args.unused.shift
       set_global_options
+
       case (valid = commands.select{|name| name =~ %r|^#{command}|}).size
       when 1 then send valid[0]
       else
@@ -262,7 +266,6 @@ COMMAND is one of:
           entry.update :note => note
         end
       end
-
 
       puts format_entries(entry)
     end
@@ -369,6 +372,24 @@ COMMAND is one of:
         warn "No entries were selected to display."
       else
         puts format_entries(entries)
+      end
+    end
+
+    def gist
+      entries = selected_entries
+
+      if selected_entries.empty?
+        warn "No entries were selected to display."
+      else
+        display = format_entries(entries)
+        github = Timetrap::Github.new
+        puts "Creating Gist on behalf of #{github.login}..."
+        url = github.create_gist(display)
+        puts url
+        
+        if system("echo '#{url}' | xclip")
+          puts "URL copied to clipboard."
+        end
       end
     end
 
@@ -512,6 +533,7 @@ COMMAND is one of:
     end
 
     extend Helpers::AutoLoad
+
     def format_entries(entries)
       load_formatter(args['-f'] || Config['default_formatter']).new(Array(entries)).output
     end
